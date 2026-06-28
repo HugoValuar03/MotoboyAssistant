@@ -6,9 +6,10 @@ import br.com.valu.motoboyassistant.domain.RidePlatform;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 public record RideResponse(
-        Long id,
+        UUID id,
         RidePlatform platform,
         BigDecimal distanceKm,
         BigDecimal totalValue,

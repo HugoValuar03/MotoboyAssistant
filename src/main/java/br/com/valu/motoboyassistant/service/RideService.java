@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 public class RideService {
@@ -44,13 +45,13 @@ public class RideService {
     }
 
     @Transactional(readOnly = true)
-    public RideResponse findById(Long id) {
+    public RideResponse findById(UUID id) {
         return RideResponse.from(rideRepository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(id)));
     }
 
     @Transactional
-    public void delete(Long id) {
+    public void delete(UUID id) {
         if (!rideRepository.existsById(id)) {
             throw new RideNotFoundException(id);
         }

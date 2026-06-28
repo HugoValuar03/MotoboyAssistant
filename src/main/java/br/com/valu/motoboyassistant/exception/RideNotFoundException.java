@@ -1,7 +1,9 @@
 package br.com.valu.motoboyassistant.exception;
 
+import java.util.UUID;
+
 public class RideNotFoundException extends RuntimeException {
-    public RideNotFoundException(Long id) {
+    public RideNotFoundException(UUID id) {
         super("Corrida não encontrada: " + id);
     }
 }

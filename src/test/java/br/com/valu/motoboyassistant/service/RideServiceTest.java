@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
@@ -64,9 +65,11 @@ class RideServiceTest {
 
     @Test
     void shouldThrowWhenRideDoesNotExist() {
-        when(rideRepository.findById(99L)).thenReturn(Optional.empty());
+        var id = UUID.randomUUID();
 
-        assertThatThrownBy(() -> rideService.findById(99L))
+        when(rideRepository.findById(id)).thenReturn(Optional.empty());
+
+        assertThatThrownBy(() -> rideService.findById(id))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessageContaining("Corrida não encontrada");
     }

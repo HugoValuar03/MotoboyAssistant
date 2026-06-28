@@ -2,6 +2,7 @@ package br.com.valu.motoboyassistant.domain;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -17,8 +18,8 @@ import jakarta.persistence.Table;
 public class Ride {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private UUID id;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
@@ -48,7 +49,7 @@ public class Ride {
         this.notes = notes;
     }
 
-    public Long getId() {
+    public UUID getId() {
         return id;
     }
 
@@ -72,7 +73,7 @@ public class Ride {
         return notes;
     }
 
-    public void setId(Long id) {
+    public void setId(UUID id) {
         this.id = id;
     }
 
