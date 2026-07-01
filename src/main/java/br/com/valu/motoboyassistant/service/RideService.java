@@ -30,8 +30,21 @@ public class RideService {
                 request.distanceKm(),
                 request.totalValue(),
                 request.occurredAt(),
-                request.notes()
-        );
+                request.notes());
+
+        return RideResponse.from(rideRepository.save(ride));
+    }
+
+    @Transactional
+    public RideResponse update(UUID id, RideCreateRequest request) {
+        Ride ride = rideRepository.findById(id)
+                .orElseThrow(() -> new RideNotFoundException(id));
+
+        ride.setPlatform(request.platform());
+        ride.setDistanceKm(request.distanceKm());
+        ride.setTotalValue(request.totalValue());
+        ride.setOccurredAt(request.occurredAt());
+        ride.setNotes(request.notes());
 
         return RideResponse.from(rideRepository.save(ride));
     }
@@ -79,7 +92,6 @@ public class RideService {
                 totalRides,
                 totalDistance.setScale(2, RoundingMode.HALF_UP),
                 totalValue.setScale(2, RoundingMode.HALF_UP),
-                averageValuePerKm
-        );
+                averageValuePerKm);
     }
 }

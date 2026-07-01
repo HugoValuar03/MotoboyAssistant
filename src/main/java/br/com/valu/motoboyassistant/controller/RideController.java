@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -34,6 +35,11 @@ public class RideController {
     public ResponseEntity<RideResponse> create(@Valid @RequestBody RideCreateRequest request) {
         var created = rideService.create(request);
         return ResponseEntity.created(URI.create("/api/corridas/" + created.id())).body(created);
+    }
+
+    @PutMapping("/{id}")
+    public RideResponse update(@PathVariable UUID id, @RequestBody RideCreateRequest request) {
+        return rideService.update(id, request);
     }
 
     @GetMapping
