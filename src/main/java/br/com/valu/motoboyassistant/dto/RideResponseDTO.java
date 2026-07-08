@@ -8,25 +8,29 @@ import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-public record RideResponse(
+public record RideResponseDTO(
         UUID id,
         RidePlatform platform,
         BigDecimal distanceKm,
         BigDecimal totalValue,
         BigDecimal valuePerKm,
         LocalDateTime occurredAt,
-        String notes
+        String notes,
+        BigDecimal tip,
+        BigDecimal waitingFee
 ) {
 
-    public static RideResponse from(Ride ride) {
-        return new RideResponse(
+    public static RideResponseDTO valueOf(Ride ride) {
+        return new RideResponseDTO(
                 ride.getId(),
                 ride.getPlatform(),
                 ride.getDistanceKm(),
                 ride.getTotalValue(),
                 ride.getTotalValue().divide(ride.getDistanceKm(), 2, RoundingMode.HALF_UP),
                 ride.getOccurredAt(),
-                ride.getNotes()
+                ride.getNotes(),
+                ride.getTip(),
+                ride.getWaitingFee()
         );
     }
 }

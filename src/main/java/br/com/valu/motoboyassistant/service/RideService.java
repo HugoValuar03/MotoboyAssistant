@@ -2,10 +2,13 @@ package br.com.valu.motoboyassistant.service;
 
 import br.com.valu.motoboyassistant.domain.Ride;
 import br.com.valu.motoboyassistant.dto.RideCreateRequest;
-import br.com.valu.motoboyassistant.dto.RideResponse;
+import br.com.valu.motoboyassistant.dto.RideResponseDTO;
 import br.com.valu.motoboyassistant.dto.RideSummaryResponse;
 import br.com.valu.motoboyassistant.exception.RideNotFoundException;
 import br.com.valu.motoboyassistant.repository.RideRepository;
+
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -23,20 +26,39 @@ public class RideService {
         this.rideRepository = rideRepository;
     }
 
+    public List<RideResponseDTO> findAll(int page, int pageSize) {
+        PageRequest pageRequest = PageRequest.of(
+                page,
+                pageSize,
+                Sort.by(Sort.Direction.DESC, "occurredAt"));
+
+        return rideRepository.findAll(pageRequest)
+                .getContent()
+                .stream()
+                .map(RideResponseDTO::valueOf)
+                .toList();
+    }
+
+    public long count() {
+        return rideRepository.count();
+    }
+
     @Transactional
-    public RideResponse create(RideCreateRequest request) {
+    public RideResponseDTO create(RideCreateRequest request) {
         var ride = new Ride(
                 request.platform(),
                 request.distanceKm(),
                 request.totalValue(),
                 request.occurredAt(),
-                request.notes());
+                request.notes(),
+                request.tip(),
+                request.waitingFee());
 
-        return RideResponse.from(rideRepository.save(ride));
+        return RideResponseDTO.valueOf(rideRepository.save(ride));
     }
 
     @Transactional
-    public RideResponse update(UUID id, RideCreateRequest request) {
+    public RideResponseDTO update(UUID id, RideCreateRequest request) {
         Ride ride = rideRepository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(id));
 
@@ -45,21 +67,23 @@ public class RideService {
         ride.setTotalValue(request.totalValue());
         ride.setOccurredAt(request.occurredAt());
         ride.setNotes(request.notes());
+        ride.setTip(request.tip());
+        ride.setWaitingFee(request.waitingFee());
 
-        return RideResponse.from(rideRepository.save(ride));
+        return RideResponseDTO.valueOf(rideRepository.save(ride));
     }
 
     @Transactional(readOnly = true)
-    public List<RideResponse> findAll() {
+    public List<RideResponseDTO> findAll() {
         return rideRepository.findAllByOrderByOccurredAtDesc()
                 .stream()
-                .map(RideResponse::from)
+                .map(RideResponseDTO::valueOf)
                 .toList();
     }
 
     @Transactional(readOnly = true)
-    public RideResponse findById(UUID id) {
-        return RideResponse.from(rideRepository.findById(id)
+    public RideResponseDTO findById(UUID id) {
+        return RideResponseDTO.valueOf(rideRepository.findById(id)
                 .orElseThrow(() -> new RideNotFoundException(id)));
     }
 
@@ -81,7 +105,9 @@ public class RideService {
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal totalValue = rides.stream()
-                .map(Ride::getTotalValue)
+                .map(ride -> ride.getTotalValue()
+                        .add(ride.getWaitingFee() != null ? ride.getWaitingFee() : BigDecimal.ZERO)
+                        .add(ride.getTip() != null ? ride.getTip() : BigDecimal.ZERO))
                 .reduce(BigDecimal.ZERO, BigDecimal::add);
 
         BigDecimal averageValuePerKm = totalDistance.compareTo(BigDecimal.ZERO) == 0

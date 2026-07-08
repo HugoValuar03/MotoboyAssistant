@@ -13,6 +13,7 @@ public record RideCreateRequest(
         @NotNull @DecimalMin(value = "0.01", inclusive = true) BigDecimal distanceKm,
         @NotNull @DecimalMin(value = "0.01", inclusive = true) BigDecimal totalValue,
         @NotNull LocalDateTime occurredAt,
-        @Size(max = 255) String notes
-) {
+        @Size(max = 255) String notes,
+        @DecimalMin(value = "0.00", inclusive = true) BigDecimal tip,
+        @DecimalMin(value = "0.00", inclusive = true) BigDecimal waitingFee) {
 }

@@ -13,10 +13,11 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import br.com.valu.motoboyassistant.dto.RideCreateRequest;
-import br.com.valu.motoboyassistant.dto.RideResponse;
+import br.com.valu.motoboyassistant.dto.RideResponseDTO;
 import br.com.valu.motoboyassistant.dto.RideSummaryResponse;
 import br.com.valu.motoboyassistant.service.RideService;
 import jakarta.validation.Valid;
@@ -31,24 +32,31 @@ public class RideController {
         this.rideService = rideService;
     }
 
+    @GetMapping
+    public ResponseEntity<List<RideResponseDTO>> findAll(
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "10") int pageSize) {
+        return ResponseEntity.ok(rideService.findAll(page, pageSize));
+    }
+
+    @GetMapping("/count")
+    public ResponseEntity<Long> count() {
+        return ResponseEntity.ok(rideService.count());
+    }
+
     @PostMapping
-    public ResponseEntity<RideResponse> create(@Valid @RequestBody RideCreateRequest request) {
+    public ResponseEntity<RideResponseDTO> create(@Valid @RequestBody RideCreateRequest request) {
         var created = rideService.create(request);
         return ResponseEntity.created(URI.create("/api/corridas/" + created.id())).body(created);
     }
 
     @PutMapping("/{id}")
-    public RideResponse update(@PathVariable UUID id, @RequestBody RideCreateRequest request) {
+    public RideResponseDTO update(@PathVariable UUID id, @RequestBody RideCreateRequest request) {
         return rideService.update(id, request);
     }
 
-    @GetMapping
-    public List<RideResponse> findAll() {
-        return rideService.findAll();
-    }
-
     @GetMapping("/{id}")
-    public RideResponse findById(@PathVariable UUID id) {
+    public RideResponseDTO findById(@PathVariable UUID id) {
         return rideService.findById(id);
     }
 
@@ -56,7 +64,7 @@ public class RideController {
     public RideSummaryResponse summary() {
         return rideService.summary();
     }
-    
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable UUID id) {
         rideService.delete(id);

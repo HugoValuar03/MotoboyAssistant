@@ -37,16 +37,24 @@ public class Ride {
     @Column(length = 255)
     private String notes;
 
+    @Column(nullable = true, precision = 10, scale = 2)
+    private BigDecimal tip;
+
+    @Column(nullable = true, precision = 10, scale = 2)
+    private BigDecimal waitingFee;
+
     protected Ride() {
     }
 
     public Ride(RidePlatform platform, BigDecimal distanceKm, BigDecimal totalValue, LocalDateTime occurredAt,
-            String notes) {
+            String notes, BigDecimal tip, BigDecimal waitingFee) {
         this.platform = platform;
         this.distanceKm = distanceKm;
         this.totalValue = totalValue;
         this.occurredAt = occurredAt;
         this.notes = notes;
+        this.tip = tip;
+        this.waitingFee = waitingFee;
     }
 
     public UUID getId() {
@@ -95,6 +103,22 @@ public class Ride {
 
     public void setNotes(String notes) {
         this.notes = notes;
+    }
+
+    public BigDecimal getTip() {
+        return tip;
+    }
+
+    public void setTip(BigDecimal tip) {
+        this.tip = tip;
+    }
+
+    public BigDecimal getWaitingFee() {
+        return waitingFee;
+    }
+
+    public void setWaitingFee(BigDecimal waitingFee) {
+        this.waitingFee = waitingFee;
     }
 
 }
