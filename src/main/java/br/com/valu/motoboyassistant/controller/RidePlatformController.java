@@ -11,7 +11,7 @@ import br.com.valu.motoboyassistant.domain.RidePlatform;
 import br.com.valu.motoboyassistant.dto.RidePlatformResponse;
 
 @RestController
-@RequestMapping("/api/platforms")
+@RequestMapping("/platforms")
 public class RidePlatformController {
 
     @GetMapping
