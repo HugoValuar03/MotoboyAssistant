@@ -37,8 +37,9 @@ class RideServiceTest {
                 new BigDecimal("12.50"),
                 new BigDecimal("37.50"),
                 LocalDateTime.of(2026, 6, 27, 10, 0),
-                "Corrida aeroporto"
-        );
+                "Corrida aeroporto",
+                new BigDecimal("0"),
+                new BigDecimal("2.30"));
 
         when(rideRepository.save(any(Ride.class))).thenAnswer(invocation -> invocation.getArgument(0));
 
@@ -51,16 +52,28 @@ class RideServiceTest {
     @Test
     void shouldReturnSummaryForSavedRides() {
         when(rideRepository.findAll()).thenReturn(List.of(
-                new Ride(RidePlatform.UBER, new BigDecimal("10.00"), new BigDecimal("25.00"), LocalDateTime.now(), null),
-                new Ride(RidePlatform.IFOOD, new BigDecimal("5.00"), new BigDecimal("20.00"), LocalDateTime.now(), null)
-        ));
+                                new Ride(
+                        RidePlatform.UBER,
+                        new BigDecimal("5.00"),
+                        new BigDecimal("25.00"),
+                        LocalDateTime.now(),
+                        null,
+                        new BigDecimal("30"),
+                        new BigDecimal("0")),
+                new Ride(RidePlatform.IFOOD,
+                        new BigDecimal("10.00"),
+                        new BigDecimal("20.00"),
+                        LocalDateTime.now(),
+                        null,
+                        new BigDecimal("30"),
+                        new BigDecimal("0"))));
 
         var summary = rideService.summary();
 
         assertThat(summary.totalRides()).isEqualTo(2);
         assertThat(summary.totalDistanceKm()).isEqualByComparingTo("15.00");
-        assertThat(summary.totalValue()).isEqualByComparingTo("45.00");
-        assertThat(summary.averageValuePerKm()).isEqualByComparingTo("3.00");
+        assertThat(summary.totalValue()).isEqualByComparingTo("105.00");
+        assertThat(summary.averageValuePerKm()).isEqualByComparingTo("7");
     }
 
     @Test
